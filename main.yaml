@@ -1,0 +1,7 @@
+---
+twitch_client_id: 
+twitch_client_secret: 
+
+channels:
+  - esl_csgo
+  - esl_csgob

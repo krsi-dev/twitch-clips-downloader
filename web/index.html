@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link href="https://unpkg.com/vuesax@4.0.1-alpha.16/dist/vuesax.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Twitch Clips Downloader</title>
+    </head>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            padding: 1em;
+            overflow: hidden;
+        }
+
+        #title {
+            font-weight: 600;
+        }
+    </style>
+    <body>
+        <div id="app">
+            <vs-col w="12">
+                <p id="title">Twitch Clips Downloader</p>
+            </vs-col>
+
+            <vs-input v-model="config.twitch_client_id" placeholder="Twitch Client ID" type="password">
+                <template #icon>
+                    <i class='bx bx-user'></i>
+                </template>
+            </vs-input>
+            <br>
+
+
+            <vs-input v-model="config.twitch_client_secret" placeholder="Twitch Client Secret" type="password">
+                <template #icon>
+                    <i class='bx bx-key'></i>
+                </template>
+            </vs-input>
+            <br>
+
+            <vs-input v-model="config.twitch_channel" placeholder="Twitch Channel">
+                <template #icon>
+                    <i class='bx bxl-twitch'></i>
+                </template>
+            </vs-input>
+            <br>
+
+            <vs-input v-model="config.clip_started_at" type="date">
+                <template #icon>
+                    <i class='bx bxs-calendar'></i>
+                </template>
+            </vs-input>
+            <br>
+            <vs-button @click="submit" :loading="loading" relief>
+                Submit
+            </vs-button>
+
+        </div>
+        <script type="text/javascript" src="/eel.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+        <script src="https://unpkg.com/vuesax@4.0.1-alpha.16/dist/vuesax.min.js"></script>
+        <script>
+            const EEL = eel
+            new Vue({
+                el: '#app',
+                data: () => (
+                    {
+                        loading: false,
+                        config: {
+                            twitch_client_id: '',
+                            twitch_client_secret: '',
+                            twitch_channel: '',
+                            clip_started_at: ''
+                        }
+                    }
+                ),
+
+                methods: {
+                    async submit() {
+                        const values = Object.values(this.config)
+                        const isMissingValue = values.find(i => !i)
+                        console.log(isMissingValue)
+
+                        this.loading = true
+                        if (isMissingValue == '') {
+                            this.$vs.notification({color: 'danger', position: 'top-right', title: 'Missing required values.', text: 'Make sure to fill all the required information on each field.'})
+                            this.loading = false
+                        } else {
+                            await EEL.submit(this.config)()
+                            this.loading = false
+                        }
+
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

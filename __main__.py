@@ -1,35 +1,24 @@
-import argparse
+import os
+import eel
 from twitch import Twitch
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        prog="python ./src"
-    )
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    parser.add_argument(
-        "twitch_channel",
-        type=str,
-        help="Name of the channel"
-    )
+eel.init("web")
 
-    parser.add_argument(
-        "twitch_client_id",
-        type=str,
-        help="Twitch API Client ID",
-    ),
+@eel.expose
+def submit(config):
+    clip_output_folder = os.path.join(ROOT_DIR, config["twitch_channel"])
 
-    parser.add_argument(
-        "twitch_client_secret",
-        type=str,
-        help="Twitch API Client Secret"
-    )
+    if not os.path.exists(clip_output_folder):
+        os.mkdir(clip_output_folder)
 
-    parser.add_argument(
-        "clip_started_at",
-        type=str,
-        help="Pull clips from a certain starting date"
-    )
+    Twitch(
+            twitch_channel=config["twitch_channel"],
+            twitch_client_id=config["twitch_client_id"],
+            twitch_client_secret=config["twitch_client_secret"],
+            clip_started_at=config["clip_started_at"],
+            clip_output_folder=clip_output_folder
+    ).get_clips()
 
-    kwargs = parser.parse_args()
-
-    Twitch(**kwargs).get_clips()
+eel.start('index.html', size=(275, 400))
